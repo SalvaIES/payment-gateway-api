@@ -17,7 +17,7 @@ class ProviderViewSet(viewsets.ModelViewSet):
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
-    """CRUD completo para transacciones con filtros por proveedor, estado y fecha."""
+    """CRUD completo para transacciones con filtros."""
 
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer

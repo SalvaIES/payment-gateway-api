@@ -11,9 +11,14 @@ class ProviderTests(TestCase):
     def setUp(self):
         """Configura el cliente autenticado y un proveedor de prueba."""
         self.client = APIClient()
-        self.user = User.objects.create_user(username='testuser', password='testpass123')
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123'
+        )
         self.token = Token.objects.create(user=self.user)
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        self.client.credentials(
+            HTTP_AUTHORIZATION='Token ' + self.token.key
+        )
         self.provider = Provider.objects.create(
             name='Stripe',
             api_key='sk_test_123',
@@ -21,14 +26,18 @@ class ProviderTests(TestCase):
         )
 
     def test_listar_proveedores(self):
-        """GET /api/providers/ debe devolver 200 y la lista de proveedores."""
+        """GET /api/providers/ debe devolver 200 y la lista."""
         response = self.client.get('/api/providers/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
 
     def test_crear_proveedor(self):
         """POST /api/providers/ debe crear un proveedor y devolver 201."""
-        data = {'name': 'PayPal', 'api_key': 'pk_test_456', 'environment': 'sandbox'}
+        data = {
+            'name': 'PayPal',
+            'api_key': 'pk_test_456',
+            'environment': 'sandbox'
+        }
         response = self.client.post('/api/providers/', data, format='json')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Provider.objects.count(), 2)
@@ -44,11 +53,16 @@ class TransactionTests(TestCase):
     """Pruebas para el endpoint de transacciones."""
 
     def setUp(self):
-        """Configura el cliente autenticado, proveedor y transacción de prueba."""
+        """Configura el cliente autenticado y datos de prueba."""
         self.client = APIClient()
-        self.user = User.objects.create_user(username='testuser', password='testpass123')
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123'
+        )
         self.token = Token.objects.create(user=self.user)
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        self.client.credentials(
+            HTTP_AUTHORIZATION='Token ' + self.token.key
+        )
         self.provider = Provider.objects.create(
             name='Stripe',
             api_key='sk_test_123',
@@ -62,14 +76,16 @@ class TransactionTests(TestCase):
         )
 
     def test_crear_transaccion(self):
-        """POST /api/transactions/ debe crear una transacción y devolver 201."""
+        """POST /api/transactions/ debe devolver 201."""
         data = {
             'provider': self.provider.id,
             'amount': '49.99',
             'currency': 'EUR',
             'status': 'pending'
         }
-        response = self.client.post('/api/transactions/', data, format='json')
+        response = self.client.post(
+            '/api/transactions/', data, format='json'
+        )
         self.assertEqual(response.status_code, 201)
 
     def test_importe_negativo(self):
@@ -80,21 +96,30 @@ class TransactionTests(TestCase):
             'currency': 'EUR',
             'status': 'pending'
         }
-        response = self.client.post('/api/transactions/', data, format='json')
+        response = self.client.post(
+            '/api/transactions/', data, format='json'
+        )
         self.assertEqual(response.status_code, 400)
 
     def test_failed_sin_incidencia(self):
         """PUT con status failed sin incident_type debe devolver 400."""
         response = self.client.put(
             f'/api/transactions/{self.transaction.id}/',
-            {'provider': self.provider.id, 'amount': '99.99',
-             'currency': 'EUR', 'status': 'failed', 'incident_type': ''},
+            {
+                'provider': self.provider.id,
+                'amount': '99.99',
+                'currency': 'EUR',
+                'status': 'failed',
+                'incident_type': ''
+            },
             format='json'
         )
         self.assertEqual(response.status_code, 400)
 
     def test_filtro_por_estado(self):
-        """GET /api/transactions/?status=pending debe filtrar correctamente."""
+        """GET con ?status=pending debe filtrar correctamente."""
         response = self.client.get('/api/transactions/?status=pending')
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(all(t['status'] == 'pending' for t in response.data))
+        self.assertTrue(
+            all(t['status'] == 'pending' for t in response.data)
+        )
