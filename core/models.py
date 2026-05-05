@@ -61,6 +61,11 @@ class Transaction(models.Model):
         blank=True,
         default=''
     )
+    stripe_payment_intent_id = models.CharField(
+        max_length=255,
+        blank=True,
+        default=''
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

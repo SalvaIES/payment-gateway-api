@@ -243,3 +243,7 @@ media/
 # OS
 .DS_Store
 Thumbs.db
+
+
+# Salva
+.env
