@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',               # ← añade esta
     'rest_framework.authtoken',     # ← y esta
     'core',                         # ← y esta
+    'frontend',                     # ← añade esta
 ]
 
 MIDDLEWARE = [

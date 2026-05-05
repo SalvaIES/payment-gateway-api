@@ -1,0 +1,84 @@
+{% extends 'frontend/base.html' %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-building"></i> Proveedores</h2>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="card-header bg-dark text-white">
+                <i class="bi bi-plus-circle"></i> Nuevo proveedor
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Clave API</label>
+                        <input type="text" name="api_key" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Entorno</label>
+                        <select name="environment" class="form-select">
+                            <option value="sandbox">Sandbox</option>
+                            <option value="production">Production</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100">
+                        <i class="bi bi-plus"></i> Crear proveedor
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card stat-card">
+            <div class="card-header bg-dark text-white">
+                <i class="bi bi-list"></i> Proveedores registrados
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Entorno</th>
+                            <th>Estado</th>
+                            <th>Creado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for provider in providers %}
+                        <tr>
+                            <td>{{ provider.id }}</td>
+                            <td><strong>{{ provider.name }}</strong></td>
+                            <td>
+                                <span class="badge {% if provider.environment == 'sandbox' %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                                    {{ provider.environment }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if provider.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {% if provider.is_active %}Activo{% else %}Inactivo{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ provider.created_at|slice:":10" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                No hay proveedores registrados.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -8,4 +8,5 @@ urlpatterns = [
     path('api/', include('core.urls')),
     path('api/auth/login/', obtain_auth_token, name='api_token_auth'),
     path('api/webhooks/stripe/', stripe_webhook, name='stripe_webhook'),
+    path('', include('frontend.urls')),
 ]
