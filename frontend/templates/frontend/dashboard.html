@@ -9,8 +9,8 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="text-muted small">Proveedores</div>
-                        <div class="fs-2 fw-bold">{{ stats.total_providers }}</div>
+                        <div class="text-white-50 small fw-bold text-uppercase mb-1">Proveedores</div>
+                        <div class="fs-1 fw-bold">{{ stats.total_providers }}</div>
                     </div>
                     <i class="bi bi-building fs-1 opacity-25"></i>
                 </div>
@@ -22,8 +22,8 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="text-muted small">Total transacciones</div>
-                        <div class="fs-2 fw-bold">{{ stats.total_transactions }}</div>
+                        <div class="text-white-50 small fw-bold text-uppercase mb-1">Total transacciones</div>
+                        <div class="fs-1 fw-bold">{{ stats.total_transactions }}</div>
                     </div>
                     <i class="bi bi-arrow-left-right fs-1 opacity-25"></i>
                 </div>
@@ -31,14 +31,14 @@
         </div>
     </div>
     <div class="col-md-2">
-        <div class="card stat-card bg-warning text-dark">
+        <div class="card stat-card bg-warning">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="text-muted small">Pendientes</div>
-                        <div class="fs-2 fw-bold">{{ stats.pending }}</div>
+                        <div class="text-dark small fw-bold text-uppercase mb-1">Pendientes</div>
+                        <div class="fs-1 fw-bold text-dark">{{ stats.pending }}</div>
                     </div>
-                    <i class="bi bi-clock fs-1 opacity-25"></i>
+                    <i class="bi bi-clock fs-1 text-dark opacity-25"></i>
                 </div>
             </div>
         </div>
@@ -48,8 +48,8 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="text-muted small">Completadas</div>
-                        <div class="fs-2 fw-bold">{{ stats.completed }}</div>
+                        <div class="text-white-50 small fw-bold text-uppercase mb-1">Completadas</div>
+                        <div class="fs-1 fw-bold">{{ stats.completed }}</div>
                     </div>
                     <i class="bi bi-check-circle fs-1 opacity-25"></i>
                 </div>
@@ -61,8 +61,8 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="text-muted small">Fallidas</div>
-                        <div class="fs-2 fw-bold">{{ stats.failed }}</div>
+                        <div class="text-white-50 small fw-bold text-uppercase mb-1">Fallidas</div>
+                        <div class="fs-1 fw-bold">{{ stats.failed }}</div>
                     </div>
                     <i class="bi bi-x-circle fs-1 opacity-25"></i>
                 </div>
