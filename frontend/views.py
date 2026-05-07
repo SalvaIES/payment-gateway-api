@@ -150,3 +150,33 @@ def update_transaction(request, transaction_id):
             headers=headers
         )
     return redirect('transactions')
+
+
+def delete_provider(request, provider_id):
+    """Elimina un proveedor."""
+    token = get_token(request)
+    if not token:
+        return redirect('login')
+
+    if request.method == 'POST':
+        headers = {'Authorization': f'Token {token}'}
+        requests.delete(
+            f'{API_BASE}/providers/{provider_id}/',
+            headers=headers
+        )
+    return redirect('providers')
+
+
+def delete_transaction(request, transaction_id):
+    """Elimina una transacción."""
+    token = get_token(request)
+    if not token:
+        return redirect('login')
+
+    if request.method == 'POST':
+        headers = {'Authorization': f'Token {token}'}
+        requests.delete(
+            f'{API_BASE}/transactions/{transaction_id}/',
+            headers=headers
+        )
+    return redirect('transactions')

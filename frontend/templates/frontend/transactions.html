@@ -109,11 +109,18 @@
                                 {% endif %}
                             </td>
                             <td>{{ t.created_at|slice:":10" }}</td>
-                            <td>
+                            <td class="d-flex gap-1">
                                 <button class="btn btn-sm btn-outline-secondary"
                                     onclick="openModal({{ t.id }}, '{{ t.provider }}', '{{ t.amount }}', '{{ t.currency }}', '{{ t.status }}')">
                                     <i class="bi bi-pencil"></i>
                                 </button>
+                                <form method="post" action="/transactions/{{ t.id }}/delete/"
+                                    onsubmit="return confirm('¿Eliminar esta transacción?')">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         {% empty %}

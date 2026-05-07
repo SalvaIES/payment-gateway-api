@@ -49,6 +49,7 @@
                             <th>Entorno</th>
                             <th>Estado</th>
                             <th>Creado</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,10 +68,19 @@
                                 </span>
                             </td>
                             <td>{{ provider.created_at|slice:":10" }}</td>
+                            <td>
+                                <form method="post" action="/providers/{{ provider.id }}/delete/"
+                                    onsubmit="return confirm('¿Eliminar este proveedor?')">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-4">
+                            <td colspan="6" class="text-center text-muted py-4">
                                 No hay proveedores registrados.
                             </td>
                         </tr>
