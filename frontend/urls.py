@@ -7,4 +7,5 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('providers/', views.providers, name='providers'),
     path('transactions/', views.transactions, name='transactions'),
+    path('transactions/<int:transaction_id>/update/', views.update_transaction, name='update_transaction'),
 ]

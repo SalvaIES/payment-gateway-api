@@ -12,6 +12,7 @@
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
+                    <input type="hidden" name="action" value="create">
                     <div class="mb-3">
                         <label class="form-label">Proveedor</label>
                         <select name="provider" class="form-select" required>
@@ -46,7 +47,7 @@
 
     <div class="col-md-8">
         <div class="card stat-card">
-            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <div class="card-header bg-dark text-white">
                 <span><i class="bi bi-list"></i> Transacciones</span>
             </div>
             <div class="card-body border-bottom">
@@ -86,6 +87,7 @@
                             <th>Estado</th>
                             <th>Incidencia</th>
                             <th>Fecha</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,10 +97,7 @@
                             <td>{{ t.provider_name }}</td>
                             <td><strong>{{ t.amount }} {{ t.currency }}</strong></td>
                             <td>
-                                <span class="badge
-                                    {% if t.status == 'completed' %}bg-success
-                                    {% elif t.status == 'failed' %}bg-danger
-                                    {% else %}bg-warning text-dark{% endif %}">
+                                <span class="badge {% if t.status == 'completed' %}bg-success{% elif t.status == 'failed' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
                                     {{ t.status }}
                                 </span>
                             </td>
@@ -110,10 +109,16 @@
                                 {% endif %}
                             </td>
                             <td>{{ t.created_at|slice:":10" }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-secondary"
+                                    onclick="openModal({{ t.id }}, '{{ t.provider }}', '{{ t.amount }}', '{{ t.currency }}', '{{ t.status }}')">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
+                            <td colspan="7" class="text-center text-muted py-4">
                                 No hay transacciones.
                             </td>
                         </tr>
@@ -124,4 +129,55 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="updateModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">Actualizar transacción</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="updateForm" method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" name="provider" id="modal_provider">
+                <input type="hidden" name="amount" id="modal_amount">
+                <input type="hidden" name="currency" id="modal_currency">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Estado</label>
+                        <select name="status" id="modal_status" class="form-select">
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de incidencia</label>
+                        <select name="incident_type" class="form-select">
+                            <option value="">Sin incidencia</option>
+                            <option value="impago">Impago</option>
+                            <option value="error_conexion">Error de conexión</option>
+                            <option value="devolucion">Devolución</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-dark">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function openModal(id, provider, amount, currency, status) {
+    document.getElementById('updateForm').action = '/transactions/' + id + '/update/';
+    document.getElementById('modal_provider').value = provider;
+    document.getElementById('modal_amount').value = amount;
+    document.getElementById('modal_currency').value = currency;
+    document.getElementById('modal_status').value = status;
+    new bootstrap.Modal(document.getElementById('updateModal')).show();
+}
+</script>
 {% endblock %}

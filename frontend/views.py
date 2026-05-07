@@ -127,3 +127,26 @@ def transactions(request):
         'selected_status': request.GET.get('status', ''),
         'selected_provider': request.GET.get('provider', ''),
     })
+
+
+def update_transaction(request, transaction_id):
+    """Actualiza el estado e incidencia de una transacción."""
+    token = get_token(request)
+    if not token:
+        return redirect('login')
+
+    if request.method == 'POST':
+        headers = {'Authorization': f'Token {token}'}
+        data = {
+            'provider': request.POST.get('provider'),
+            'amount': request.POST.get('amount'),
+            'currency': request.POST.get('currency'),
+            'status': request.POST.get('status'),
+            'incident_type': request.POST.get('incident_type', ''),
+        }
+        requests.put(
+            f'{API_BASE}/transactions/{transaction_id}/',
+            json=data,
+            headers=headers
+        )
+    return redirect('transactions')
