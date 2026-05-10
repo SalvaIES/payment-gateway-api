@@ -135,7 +135,12 @@
                                         class="btn btn-sm btn-primary">
                                         <i class="bi bi-credit-card"></i> Pagar
                                     </a>
-                                    {% endif %}
+                                {% elif t.provider_name == 'PayPal' %}
+                                    <a href="/api/pay/paypal/{{ t.id }}/"
+                                        class="btn btn-sm btn-info text-white">
+                                        <i class="bi bi-paypal"></i> Pagar
+                                    </a>
+                                {% endif %}
                                 {% endif %}
                                 <button class="btn btn-sm btn-outline-secondary"
                                     onclick="openModal({{ t.id }}, '{{ t.provider }}', '{{ t.amount }}', '{{ t.currency }}', '{{ t.status }}')">

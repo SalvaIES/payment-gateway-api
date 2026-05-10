@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
-from core.views import stripe_webhook, redsys_payment, redsys_webhook, stripe_payment
+from core.views import (
+    stripe_webhook, redsys_payment, redsys_webhook,
+    stripe_payment, paypal_payment, paypal_execute
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -11,5 +14,7 @@ urlpatterns = [
     path('api/webhooks/redsys/', redsys_webhook, name='redsys_webhook'),
     path('api/pay/redsys/<int:transaction_id>/', redsys_payment, name='redsys_payment'),
     path('api/pay/stripe/<int:transaction_id>/', stripe_payment, name='stripe_payment'),
+    path('api/pay/paypal/<int:transaction_id>/', paypal_payment, name='paypal_payment'),
+    path('api/pay/paypal/execute/', paypal_execute, name='paypal_execute'),
     path('', include('frontend.urls')),
 ]

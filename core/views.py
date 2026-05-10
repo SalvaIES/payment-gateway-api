@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from pyredsys.payment import request_payment, MerchantParameters
 from pyredsys.notification import validate_notification, SignatureVerificationError
+import paypalrestsdk
 from .models import Provider, Transaction
 from .serializers import ProviderSerializer, TransactionSerializer
 
@@ -208,3 +209,69 @@ def redsys_webhook(request):
             return HttpResponse(status=400)
 
     return HttpResponse(status=200)
+
+def paypal_payment(request, transaction_id):
+    """Crea un pago en PayPal y redirige al usuario."""
+    try:
+        transaction = Transaction.objects.get(id=transaction_id)
+    except Transaction.DoesNotExist:
+        return HttpResponse(status=404)
+
+    paypalrestsdk.configure({
+        'mode': 'sandbox',
+        'client_id': settings.PAYPAL_CLIENT_ID,
+        'client_secret': settings.PAYPAL_CLIENT_SECRET,
+    })
+
+    payment = paypalrestsdk.Payment({
+        'intent': 'sale',
+        'payer': {'payment_method': 'paypal'},
+        'redirect_urls': {
+            'return_url': f'http://127.0.0.1:8000/api/pay/paypal/execute/?transaction_id={transaction_id}',
+            'cancel_url': 'http://127.0.0.1:8000/transactions/',
+        },
+        'transactions': [{
+            'amount': {
+                'total': str(transaction.amount),
+                'currency': transaction.currency,
+            },
+            'description': f'Transacción #{transaction_id}',
+        }]
+    })
+
+    if payment.create():
+        for link in payment.links:
+            if link.rel == 'approval_url':
+                return HttpResponse(
+                    f'<meta http-equiv="refresh" content="0;url={link.href}">',
+                    content_type='text/html'
+                )
+    return HttpResponse('Error al crear el pago en PayPal.', status=400)
+
+
+def paypal_execute(request):
+    """Ejecuta el pago de PayPal tras la aprobación del usuario."""
+    payment_id = request.GET.get('paymentId')
+    payer_id = request.GET.get('PayerID')
+    transaction_id = request.GET.get('transaction_id')
+
+    paypalrestsdk.configure({
+        'mode': 'sandbox',
+        'client_id': settings.PAYPAL_CLIENT_ID,
+        'client_secret': settings.PAYPAL_CLIENT_SECRET,
+    })
+
+    payment = paypalrestsdk.Payment.find(payment_id)
+
+    if payment.execute({'payer_id': payer_id}):
+        Transaction.objects.filter(id=transaction_id).update(
+            status='completed'
+        )
+    else:
+        Transaction.objects.filter(id=transaction_id).update(
+            status='failed',
+            incident_type='error_conexion'
+        )
+
+    from django.shortcuts import redirect
+    return redirect('/transactions/')
