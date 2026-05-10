@@ -1,6 +1,7 @@
 import requests
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 
 API_BASE = 'http://127.0.0.1:8000/api'
@@ -120,8 +121,13 @@ def transactions(request):
         f'{API_BASE}/transactions/', headers=headers, params=params
     ).json()
 
+    paginator = Paginator(transaction_list, 10)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
     return render(request, 'frontend/transactions.html', {
-        'transactions': transaction_list,
+        'transactions': page_obj,
+        'page_obj': page_obj,
         'providers': provider_list,
         'username': request.session.get('username'),
         'selected_status': request.GET.get('status', ''),
