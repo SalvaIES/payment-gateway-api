@@ -86,4 +86,36 @@
         </div>
     </div>
 </div>
+<div class="row g-4 mt-2">
+    <div class="col-md-6">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h5 class="card-title">Transacciones por estado</h5>
+                <canvas id="transactionChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('transactionChart').getContext('2d');
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Pendientes', 'Completadas', 'Fallidas'],
+        datasets: [{
+            data: [{{ stats.pending }}, {{ stats.completed }}, {{ stats.failed }}],
+            backgroundColor: ['#ffc107', '#198754', '#dc3545'],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+});
+</script>
 {% endblock %}
