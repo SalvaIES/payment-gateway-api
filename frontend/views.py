@@ -117,6 +117,9 @@ def transactions(request):
     if request.GET.get('provider'):
         params['provider'] = request.GET.get('provider')
 
+    ordering = request.GET.get('ordering', '-created_at')
+    params['ordering'] = ordering
+
     transaction_list = requests.get(
         f'{API_BASE}/transactions/', headers=headers, params=params
     ).json()
@@ -132,6 +135,7 @@ def transactions(request):
         'username': request.session.get('username'),
         'selected_status': request.GET.get('status', ''),
         'selected_provider': request.GET.get('provider', ''),
+        'ordering': ordering,
     })
 
 

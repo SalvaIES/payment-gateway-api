@@ -83,10 +83,24 @@
                         <tr>
                             <th>ID</th>
                             <th>Proveedor</th>
-                            <th>Importe</th>
+                            <th>
+                                <a href="?ordering={% if ordering == 'amount' %}-amount{% else %}amount{% endif %}&status={{ selected_status }}&provider={{ selected_provider }}" class="text-decoration-none text-dark">
+                                    Importe
+                                    {% if ordering == 'amount' %}<i class="bi bi-arrow-up"></i>
+                                    {% elif ordering == '-amount' %}<i class="bi bi-arrow-down"></i>
+                                    {% endif %}
+                                </a>
+                            </th>
                             <th>Estado</th>
                             <th>Incidencia</th>
-                            <th>Fecha</th>
+                            <th>
+                                <a href="?ordering={% if ordering == 'created_at' %}-created_at{% else %}created_at{% endif %}&status={{ selected_status }}&provider={{ selected_provider }}" class="text-decoration-none text-dark">
+                                    Fecha
+                                    {% if ordering == 'created_at' %}<i class="bi bi-arrow-up"></i>
+                                    {% elif ordering == '-created_at' %}<i class="bi bi-arrow-down"></i>
+                                    {% endif %}
+                                </a>
+                            </th>
                             <th></th>
                         </tr>
                     </thead>
