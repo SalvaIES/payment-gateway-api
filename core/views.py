@@ -55,7 +55,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
-        """Crea la transacción y un PaymentIntent en Stripe."""
+        """Crea la transacción y un PaymentIntent en Stripe si el proveedor es Stripe."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -75,7 +75,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
                     }
                 )
                 transaction = serializer.save(
-                    stripe_payment_intent_id=intent.id
+                    stripe_payment_intent_id=intent.id,
+                    stripe_client_secret=intent.client_secret
                 )
             except stripe.StripeError as e:
                 return Response(
@@ -121,6 +122,24 @@ def stripe_webhook(request):
         ).update(status='failed', incident_type='impago')
 
     return HttpResponse(status=200)
+
+
+def stripe_payment(request, transaction_id):
+    """Muestra el formulario de pago de Stripe."""
+    try:
+        transaction = Transaction.objects.get(id=transaction_id)
+    except Transaction.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if not transaction.stripe_client_secret:
+        return HttpResponse('Esta transacción no tiene un client secret de Stripe.', status=400)
+
+    return render(request, 'core/stripe_payment.html', {
+        'transaction': transaction,
+        'client_secret': transaction.stripe_client_secret,
+        'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
+    })
+
 
 @csrf_exempt
 def redsys_payment(request, transaction_id):

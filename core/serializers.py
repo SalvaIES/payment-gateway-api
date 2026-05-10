@@ -22,7 +22,11 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = '__all__'
-        read_only_fields = ['created_at', 'updated_at']
+        read_only_fields = [
+            'created_at',
+            'updated_at',
+            'stripe_client_secret'
+        ]
 
     def validate_amount(self, value):
         """El importe debe ser mayor que cero."""

@@ -136,11 +136,12 @@ REST_FRAMEWORK = {
 # Salva
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CSRF_TRUSTED_ORIGINS = ['https://outscore-footless-pebbly.ngrok-free.dev']
 
 REDSYS_SECRET_KEY = os.getenv('REDSYS_SECRET_KEY')
 REDSYS_MERCHANT_CODE = os.getenv('REDSYS_MERCHANT_CODE')
 REDSYS_TERMINAL = os.getenv('REDSYS_TERMINAL')
 REDSYS_URL = os.getenv('REDSYS_URL')
-CSRF_TRUSTED_ORIGINS = ['https://outscore-footless-pebbly.ngrok-free.dev']

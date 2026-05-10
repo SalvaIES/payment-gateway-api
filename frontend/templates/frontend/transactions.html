@@ -123,7 +123,20 @@
                                 {% endif %}
                             </td>
                             <td>{{ t.created_at|slice:":10" }}</td>
-                            <td class="d-flex gap-1">
+                            <td class="d-flex gap-1 align-items-center">
+                                {% if t.status == 'pending' %}
+                                    {% if t.provider_name == 'Redsys' %}
+                                    <a href="/api/pay/redsys/{{ t.id }}/"
+                                        class="btn btn-sm btn-warning text-dark">
+                                        <i class="bi bi-bank"></i> Pagar
+                                    </a>
+                                    {% elif t.provider_name == 'Stripe' %}
+                                    <a href="/api/pay/stripe/{{ t.id }}/"
+                                        class="btn btn-sm btn-primary">
+                                        <i class="bi bi-credit-card"></i> Pagar
+                                    </a>
+                                    {% endif %}
+                                {% endif %}
                                 <button class="btn btn-sm btn-outline-secondary"
                                     onclick="openModal({{ t.id }}, '{{ t.provider }}', '{{ t.amount }}', '{{ t.currency }}', '{{ t.status }}')">
                                     <i class="bi bi-pencil"></i>
