@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirigiendo a Redsys...</title>
+</head>
+<body>
+    <p>Redirigiendo al banco...</p>
+    <form id="redsys_form" action="{{ redsys_url }}" method="post">
+        <input type="hidden" name="Ds_SignatureVersion" value="{{ signature_version }}">
+        <input type="hidden" name="Ds_MerchantParameters" value="{{ merchant_parameters }}">
+        <input type="hidden" name="Ds_Signature" value="{{ merchant_signature }}">
+        <button type="submit">Pagar ahora</button>
+    </form>
+    <script>
+        document.getElementById('redsys_form').submit();
+    </script>
+</body>
+</html>

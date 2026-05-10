@@ -1,11 +1,15 @@
+from datetime import datetime
 import stripe
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.shortcuts import render
 from rest_framework import viewsets, filters, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from pyredsys.payment import request_payment, MerchantParameters
+from pyredsys.notification import validate_notification, SignatureVerificationError
 from .models import Provider, Transaction
 from .serializers import ProviderSerializer, TransactionSerializer
 
@@ -115,5 +119,73 @@ def stripe_webhook(request):
         Transaction.objects.filter(
             stripe_payment_intent_id=payment_intent_id
         ).update(status='failed', incident_type='impago')
+
+    return HttpResponse(status=200)
+
+@csrf_exempt
+def redsys_payment(request, transaction_id):
+    """Genera el formulario de pago de Redsys."""
+    try:
+        transaction = Transaction.objects.get(id=transaction_id)
+    except Transaction.DoesNotExist:
+        return HttpResponse(status=404)
+
+    merchant_params = MerchantParameters(
+        DS_MERCHANT_AMOUNT=int(transaction.amount * 100),
+        DS_MERCHANT_ORDER=f'P{str(transaction.id).zfill(11)}',
+        DS_MERCHANT_MERCHANTCODE=int(settings.REDSYS_MERCHANT_CODE),
+        DS_MERCHANT_CURRENCY=978,
+        DS_MERCHANT_TRANSACTIONTYPE=0,
+        DS_MERCHANT_TERMINAL=int(settings.REDSYS_TERMINAL),
+        DS_MERCHANT_MERCHANTURL='https://outscore-footless-pebbly.ngrok-free.dev/api/webhooks/redsys/',
+        DS_MERCHANT_URLOK='https://outscore-footless-pebbly.ngrok-free.dev/transactions/',
+        DS_MERCHANT_URLKO='https://outscore-footless-pebbly.ngrok-free.dev/transactions/',
+    )
+
+    signed = request_payment(
+        settings.REDSYS_SECRET_KEY,
+        merchant_params
+    )
+
+    return render(request, 'core/redsys_payment.html', {
+        'redsys_url': settings.REDSYS_URL,
+        'merchant_parameters': signed.Ds_MerchantParameters,
+        'merchant_signature': signed.Ds_Signature,
+        'signature_version': signed.Ds_SignatureVersion,
+    })
+
+
+@csrf_exempt
+def redsys_webhook(request):
+    """Recibe y procesa las notificaciones de Redsys."""
+    if request.method == 'POST':
+        try:
+            parameters = request.POST.get('Ds_MerchantParameters')
+            signature = request.POST.get('Ds_Signature')
+            version = request.POST.get('Ds_SignatureVersion')
+
+            notification = validate_notification(
+                settings.REDSYS_SECRET_KEY,
+                parameters,
+                signature,
+                version
+            )
+
+            response_code = notification.Ds_Response
+            order = notification.Ds_Order.lstrip('P').lstrip('0') or '0'
+
+            if response_code < 100:
+                Transaction.objects.filter(id=order).update(
+                    status='completed'
+                )
+            else:
+                Transaction.objects.filter(id=order).update(
+                    status='failed',
+                    incident_type='error_conexion'
+                )
+        except SignatureVerificationError:
+            return HttpResponse(status=400)
+        except Exception:
+            return HttpResponse(status=400)
 
     return HttpResponse(status=200)

@@ -29,8 +29,7 @@ SECRET_KEY = 'django-insecure-r92gcg76i3hwn&vgl@q1h2gqm44s4bjpat)wxd7r2g9ilep7z_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.ngrok-free.dev']
 
 # Application definition
 
@@ -137,4 +136,11 @@ REST_FRAMEWORK = {
 # Salva
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REDSYS_SECRET_KEY = os.getenv('REDSYS_SECRET_KEY')
+REDSYS_MERCHANT_CODE = os.getenv('REDSYS_MERCHANT_CODE')
+REDSYS_TERMINAL = os.getenv('REDSYS_TERMINAL')
+REDSYS_URL = os.getenv('REDSYS_URL')
+CSRF_TRUSTED_ORIGINS = ['https://outscore-footless-pebbly.ngrok-free.dev']
