@@ -1,0 +1,40 @@
+El proyecto está completo. Resumen final de todo lo que has construido:
+Backend API REST
+
+Modelos Provider y Transaction ✅
+Endpoints CRUD completos con autenticación por token ✅
+Filtros por proveedor, estado y fecha ✅
+13 tests unitarios ✅
+Código PEP8 ✅
+
+Integración Stripe
+
+PaymentIntent automático al crear transacción ✅
+Formulario de pago con tarjeta ✅
+Webhooks para actualización automática de estado ✅
+
+Integración Redsys
+
+Formulario firmado HMAC-SHA256 ✅
+Redirección al TPV virtual del banco ✅
+Webhooks para actualización automática de estado ✅
+
+Integración PayPal
+
+Redirección a PayPal sandbox ✅
+Callback de confirmación ✅
+Actualización automática de estado ✅
+
+Frontend
+
+Login, dashboard, proveedores y transacciones ✅
+Botones de pago por proveedor ✅
+Gráfico, paginación, ordenación y filtros ✅
+
+Documentación
+
+README, memoria técnica y manual de usuario ✅
+Product backlog ✅
+Commits regulares en GitHub ✅
+
+¡Mucha suerte en la defensa!
